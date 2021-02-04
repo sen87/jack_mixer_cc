@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# jack_mixer and jack_mixer_cc
+jack_mixer -c ~/.config/jack_mixer/config.xml &
+sleep 2 && python jack_mixer_cc.py &

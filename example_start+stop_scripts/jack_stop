@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# jack_mixer and jack_mixer_cc
+pkill -15 -f "jack_mixer" &
