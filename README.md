@@ -60,4 +60,4 @@ If you start your JACK session in an automated way and use something that autoco
 
 Compatibility
 ---
-Git(04.02.2021) of jack_mixer with the [Fix MIDI control and output](https://github.com/jack-mixer/jack_mixer/pull/95) commit by SpotlightKid applied.
+jack_mixer (Git: 9e0c152f801efee711bbd72ec89d77c86c5b63f7) with the [Fix MIDI control and output](https://github.com/jack-mixer/jack_mixer/pull/95) commit by SpotlightKid applied.
