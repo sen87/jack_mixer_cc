@@ -18,6 +18,7 @@ Features
 
 Use Cases
 ---
+- **`CLI`** command line access to jack_mixer channel controls
 - **`Keyboard Shortcuts`** can be used (with [xbindkeys](https://www.nongnu.org/xbindkeys/xbindkeys.html) for example) to control JACK volume via multimedia keys
 - **`Scripts`** automate channel states
 - **`Example`** the scripts could probably be easily adapted to control other JACK-clients via MIDI CC
