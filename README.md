@@ -56,8 +56,3 @@ Known Issue
 If you start your JACK session in an automated way and use something that autoconnects all ports (like the [QjackCtl Patchbay](https://www.rncbc.org/drupal/node/76)) the channel states might not be restored (or only partially).
 <br>The script waits until all MIDI-ports of the JACK-client are connected before the session is restored but it seems that there is a (small) delay until MIDI messages are getting parsed. If this is caused by jack_mixer or JACK itself I don't know (seems inconsistent or dependent on system load).
 <br>The lazy fix for this is to start jack_mixer_cc delayed. See the included example scripts under `example_start+stop_scripts/`.
-
-
-Compatibility
----
-jack_mixer (Git: 9e0c152f801efee711bbd72ec89d77c86c5b63f7) with the [Fix MIDI control and output](https://github.com/jack-mixer/jack_mixer/pull/95) commit by SpotlightKid applied.
