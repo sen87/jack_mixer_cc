@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # sen <sen@archlinux.us>
 # --- optional dependencies
-# libnotify, python-gobject
+# python-dbus
 # --- imports
 from sys import argv
 import getopt
@@ -12,13 +12,16 @@ import asyncio
 info = """
 ┌───────────────────────────────────────────────────
 │ jack_mixer MIDI CC Controller
-│ v0.1 (client)
+│ v0.2 (client)
 ├───────────────────────────────────────────────────
 │ Options:
 │ --debug                  debug mode
 │ --host <IP>              remote control
 │                            > defaults to localhost
-│ -n                       disable notifications
+│ --notify <TYPE>          d = default (freedesktop)
+│                          g = gnome shell
+│                          p = plasma (kde)
+│                            > disabled by default
 ├──────────
 │ Controls:
 │ -v <chan name>,<volume>  set volume (0 - 127)
@@ -31,7 +34,7 @@ info = """
 host = "localhost"
 port = 9797
 debug = 0
-noti = 1
+noti = ""
 
 
 # -- message client
@@ -58,40 +61,49 @@ async def tcp(host, msg):
 
 
 # -- desktop notification
-def notify(name, volume, mute, solo):
+def dbus_notify(n_type, name, volume, mute, solo):
     try:
-        from gi import require_version
-        require_version("Notify", "0.7")
-        from gi.repository import Notify
+        import dbus
+        bus = dbus.SessionBus()
+        vol_perc = int(volume / 1.27)
         # icons
-        if volume == 0 or mute == "On":
-            icon = "audio-volume-muted"
-        elif volume > 99:
-            icon = "audio-volume-high"
-        elif volume > 49:
-            icon = "audio-volume-medium"
-        elif volume > 0:
-            icon = "audio-volume-low"
-        # ascii slider
-        slider_vol = int((volume + 1) / 8)
-        if slider_vol < 1:
-            slider_vol = 1
-        if slider_vol > 16:
-            slider_vol = 16
-        slider = ""
-        for i in range(15 + 1):
-            if i + 1 == slider_vol:
-                slider += "█"
-            else:
-                slider += "🭹"
-        # setup notify
-        Notify.init("Jack | " + name)
-        body = "ⓥ " + str(volume) + " ┃ ⓜ " + mute + " ┃ ⓢ " + solo
-        popup = Notify.Notification.new(slider, body, icon)
-        popup.props.id = 777  # only one instance
-        popup.set_urgency(0)
-        popup.set_timeout(2000)
-        popup.show()
+        icon = "audio-volume-"
+        if vol_perc == 0 or mute == "On":
+            icon += "muted"
+        elif vol_perc > 70:
+            icon += "high"
+        elif vol_perc > 30:
+            icon += "medium"
+        else:
+            icon += "low"
+        if n_type == "g":
+            # gnome shell
+            dbus_object = bus.get_object("org.gnome.Shell", "/org/gnome/Shell")
+            dbus_interface = dbus.Interface(dbus_object, "org.gnome.Shell")
+            dbus_interface.ShowOSD({"icon": icon, "label": name + ": ⓜ " + mute + " | ⓢ " + solo, "level": vol_perc / 100})
+        elif n_type == "p":
+            # plasma (kde)
+            if mute == "On":
+                vol_perc = 0
+            dbus_object = bus.get_object("org.kde.plasmashell", "/org/kde/osdService")
+            dbus_interface = dbus.Interface(dbus_object, "org.kde.osdService")
+            dbus_interface.mediaPlayerVolumeChanged(vol_perc, name, icon)
+        else:
+            # default (freedesktop spec)
+            slider_vol = int((volume + 1) / 8)
+            if slider_vol < 1:
+                slider_vol = 1
+            if slider_vol > 16:
+                slider_vol = 16
+            slider = ""
+            for i in range(15 + 1):
+                if i + 1 == slider_vol:
+                    slider += "█"
+                else:
+                    slider += "🭹"
+            dbus_object = bus.get_object("org.freedesktop.Notifications", "/org/freedesktop/Notifications")
+            dbus_interface = dbus.Interface(dbus_object, "org.freedesktop.Notifications")
+            dbus_interface.Notify("Jack | " + name, 777, icon, slider, "ⓥ " + str(vol_perc) + "% ┃ ⓜ " + mute + " ┃ ⓢ " + solo, [], {}, 2000)
     except BaseException:
         pass
 
@@ -101,7 +113,7 @@ try:
     # parse cli parameters
     name = ""
     control = ""
-    options, values = getopt.getopt(argv[1:], "hnv:i:d:m:s:", ["help", "debug", "host="])
+    options, values = getopt.getopt(argv[1:], "hv:i:d:m:s:", ["help", "debug", "host=", "notify="])
     for opt, val in options:
         if opt in ("-h", "--help"):
             print(info)
@@ -110,8 +122,8 @@ try:
             debug = 1
         elif opt == "--host":
             host = val
-        elif opt == "-n":
-            noti = 0
+        elif opt == "--notify":
+            noti = val
         elif opt == "-v":
             try:
                 name, volume = val.split(",")
@@ -141,7 +153,7 @@ try:
     if noti:
         # show notification
         name, volume, mute, solo = answer.split("⚏")
-        notify(name, int(volume), mute, solo)
+        dbus_notify(noti, name, int(volume), mute, solo)
 except getopt.GetoptError:
     print(info)
     _exit(0)

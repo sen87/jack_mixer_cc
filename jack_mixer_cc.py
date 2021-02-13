@@ -16,7 +16,7 @@ import xml.etree.ElementTree as et
 info = """
 ┌──────────────────────────────────────────────────────────
 │ jack_mixer MIDI CC Controller
-│ v0.1
+│ v0.2
 ├──────────────────────────────────────────────────────────
 │ Options:
 │ --debug        debug mode
@@ -72,8 +72,8 @@ def map_channels():
 # -- jack client
 @jack_client.set_process_callback
 def process(frames):
-    # midi out
     global jack_ipc_buffer, activity
+    # midi out
     midi_out.clear_buffer()
     for msg in jack_ipc_buffer:
         try:
@@ -176,7 +176,7 @@ def set_state(name, control):
 
 
 def save_state(channel, val):
-    global chan_map, activity
+    global chan_map
     for channels in chan_map:
         for cc in range(1, 3 + 1):
             if channels[cc][0] == channel:
