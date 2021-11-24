@@ -167,7 +167,7 @@ def set_state(name, control):
                     elif control[1] == "u":
                         # unmute
                         state[cc] = 0
-                    else:
+                    elif control[1] == "t":
                         # toggle mute / solo
                         if state[cc] == 127:
                             state[cc] = 0
