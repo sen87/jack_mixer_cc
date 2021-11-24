@@ -16,7 +16,7 @@ import xml.etree.ElementTree as et
 info = """
 ┌──────────────────────────────────────────────────────────
 │ jack_mixer MIDI CC Controller
-│ v0.2
+│ v0.3
 ├──────────────────────────────────────────────────────────
 │ Options:
 │ --debug        debug mode
@@ -161,11 +161,18 @@ def set_state(name, control):
                         state[1] = 127
                     msg = (176, chan[1][0], state[1])
                 elif cont_id == cc:
-                    # toggle mute / solo
-                    if state[cc] == 127:
+                    if control[1] == "m":
+                        # mute
+                        state[cc] = 127
+                    elif control[1] == "u":
+                        # unmute
                         state[cc] = 0
                     else:
-                        state[cc] = 127
+                        # toggle mute / solo
+                        if state[cc] == 127:
+                            state[cc] = 0
+                        else:
+                            state[cc] = 127
                     msg = (176, chan[cc][0], state[cc])
             if debug:
                 print("SET_STATE:", state)

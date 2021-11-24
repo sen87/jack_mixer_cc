@@ -12,7 +12,7 @@ import asyncio
 info = """
 ┌───────────────────────────────────────────────────
 │ jack_mixer MIDI CC Controller
-│ v0.2 (client)
+│ v0.3 (client)
 ├───────────────────────────────────────────────────
 │ Options:
 │ --debug                  debug mode
@@ -27,7 +27,9 @@ info = """
 │ -v <chan name>,<volume>  set volume (0 - 127)
 │ -i <chan name>           increase volume
 │ -d <chan name>           decrease volume
-│ -m <chan name>           toggle mute
+│ -m <chan name>           mute
+│ -u <chan name>           unmute
+│ -t <chan name>           toggle mute
 │ -s <chan name>           toggle solo mode
 └───────────────────────────────────────────────────\n"""
 # --- settings
@@ -113,7 +115,7 @@ try:
     # parse cli parameters
     name = ""
     control = ""
-    options, values = getopt.getopt(argv[1:], "hv:i:d:m:s:", ["help", "debug", "host=", "notify="])
+    options, values = getopt.getopt(argv[1:], "hv:i:d:m:u:t:s:", ["help", "debug", "host=", "notify="])
     for opt, val in options:
         if opt in ("-h", "--help"):
             print(info)
@@ -139,10 +141,16 @@ try:
             control = "1d"
             name = val
         elif opt == "-m":
-            control = "2"
+            control = "2m"
+            name = val
+        elif opt == "-u":
+            control = "2u"
+            name = val
+        elif opt == "-t":
+            control = "2t"
             name = val
         elif opt == "-s":
-            control = "3"
+            control = "3t"
             name = val
     if not len(argv[1:]) or not name or not control:
         print(info)

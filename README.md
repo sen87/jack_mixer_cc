@@ -7,10 +7,10 @@
 
 ## Features
 - **`Volume Control`** increase, decrease and set to value
-- **`toggle Mute`**
-- **`toggle Solo Mode`**
-- **`Persistance`** autosave/restore all channel states
-- **`Remote Control`** client can send TCP control messages over the network 
+- **`Mute / Unmute`** dedicated and toggle
+- **`Solo Mode`** toggle
+- **`Persistance`** autosave and restore all channel states
+- **`Remote Control`** client can send TCP control messages over the network
 - **`Desktop Notifications`** client-side OSD (channel state)
 
 
@@ -38,7 +38,7 @@ jack_mixer_cc.py: `python python-jack-client jack_mixer`
 <br><img src="https://user-images.githubusercontent.com/16217416/107836482-927eab00-6d9d-11eb-911a-062cb2621692.png"/>
 ___
 ### Remote control
-Run jack_mixer_cc with the LAN IP from your JACK system. For example: 192.168.1.10 
+Run jack_mixer_cc with the LAN IP from your JACK system. For example: 192.168.1.10
 <br>`python jack_mixer_cc.py --ip 192.168.1.10`
 <br> Then, from another system, connect with the client to this IP:
 <br>`python jack_mixer_cc_client.py --host 192.168.1.10 --notify d -m mpd`
