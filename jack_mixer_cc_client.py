@@ -36,24 +36,26 @@ info = """
 host = "localhost"
 port = 9797
 debug = 0
+name = ""
+control = ""
 noti = ""
 
 
 # -- message client
 async def tcp(host, msg):
     try:
-        # connect to server
+        # - connect to server
         client, server = await asyncio.open_connection(host, port)
-        # send message
+        # - send message
         server.write(msg.encode("utf8"))
         await server.drain()
         if debug:
             print("SERVER:", server.get_extra_info("peername"), "\nTCP_MSG_OUT:", msg)
-        # wait for response
+        # - wait for response
         answer = (await asyncio.wait_for(client.read(50), timeout=3)).decode("utf8")
         if debug:
             print("TCP_MSG_IN:", answer)
-        # terminate connection
+        # - terminate connection
         server.close()
         await server.wait_closed()
         return answer
@@ -65,10 +67,8 @@ async def tcp(host, msg):
 # -- desktop notification
 def dbus_notify(n_type, name, volume, mute, solo):
     try:
-        import dbus
-        bus = dbus.SessionBus()
         vol_perc = int(volume / 1.27)
-        # icons
+        # - icons
         icon = "audio-volume-"
         if vol_perc == 0 or mute == "On":
             icon += "muted"
@@ -78,20 +78,18 @@ def dbus_notify(n_type, name, volume, mute, solo):
             icon += "medium"
         else:
             icon += "low"
-        if n_type == "g":
-            # gnome shell
+        # - send dbus msg
+        if n_type == "g": # gnome shell
             dbus_object = bus.get_object("org.gnome.Shell", "/org/gnome/Shell")
             dbus_interface = dbus.Interface(dbus_object, "org.gnome.Shell")
             dbus_interface.ShowOSD({"icon": icon, "label": name + ": ⓜ " + mute + " | ⓢ " + solo, "level": vol_perc / 100})
-        elif n_type == "p":
-            # plasma (kde)
+        elif n_type == "p": # plasma (kde)
             if mute == "On":
                 vol_perc = 0
             dbus_object = bus.get_object("org.kde.plasmashell", "/org/kde/osdService")
             dbus_interface = dbus.Interface(dbus_object, "org.kde.osdService")
             dbus_interface.mediaPlayerVolumeChanged(vol_perc, name, icon)
-        else:
-            # default (freedesktop spec)
+        else: # default (freedesktop spec)
             slider_vol = int((volume + 1) / 8)
             if slider_vol < 1:
                 slider_vol = 1
@@ -111,10 +109,7 @@ def dbus_notify(n_type, name, volume, mute, solo):
 
 
 # -- main
-try:
-    # parse cli parameters
-    name = ""
-    control = ""
+try: # parse cli parameters
     options, values = getopt.getopt(argv[1:], "hv:i:d:m:u:t:s:", ["help", "debug", "host=", "notify="])
     for opt, val in options:
         if opt in ("-h", "--help"):
@@ -132,7 +127,7 @@ try:
                 if int(volume) or volume == "0":
                     control = "1v," + volume
             except BaseException:
-                print("input format: -v <channel name>,<volume>")
+                print("[PARAMETER ERROR] volume example: -v test,50")
                 _exit(0)
         elif opt == "-i":
             control = "1i"
@@ -158,8 +153,9 @@ try:
     # send tcp message
     msg = name + "⚏" + control
     answer = asyncio.run(tcp(host, msg))
-    if noti:
-        # show notification
+    if noti: # setup notification
+        import dbus
+        bus = dbus.SessionBus()
         name, volume, mute, solo = answer.split("⚏")
         dbus_notify(noti, name, int(volume), mute, solo)
 except getopt.GetoptError:
