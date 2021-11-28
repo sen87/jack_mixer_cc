@@ -37,20 +37,19 @@ jack_mixer_cc_client.py: `python` | Optional: `python-dbus` (for notifications)
 `python jack_mixer_cc_client.py --notify d -i mpd`
 5. You should see a notification like this:<br>
 <img src="https://user-images.githubusercontent.com/16217416/107836482-927eab00-6d9d-11eb-911a-062cb2621692.png"/>
-___
+
 ### Remote control
 Run jack_mixer_cc with the LAN IP from your JACK system. For example: 192.168.1.10<br>
 `python jack_mixer_cc.py --ip 192.168.1.10`<br>
 Then, from another system, connect with the client to this IP:<br>
 `python jack_mixer_cc_client.py --host 192.168.1.10 --notify d -m mpd`
-___
+
 ### Native desktop notifications
 __gnome shell:__ `python jack_mixer_cc_client.py --notify g -i mpd`<br>
-<img src="https://user-images.githubusercontent.com/16217416/107836487-93afd800-6d9d-11eb-9b73-7ba80f08f83d.png"/>
-<br>
+<img src="https://user-images.githubusercontent.com/16217416/107836487-93afd800-6d9d-11eb-9b73-7ba80f08f83d.png"/><br>
 __plasma (kde):__ `python jack_mixer_cc_client.py --notify p -i mpd`<br>
 <img src="https://user-images.githubusercontent.com/16217416/107836488-93afd800-6d9d-11eb-8bb6-e0edc567ecfc.png"/>
-___
+
 ### PipeWire Control
 Maps a PW node to a jack_mixer channel (multiple mappings are possible). The channel volume fader and mute toggle will now directly control the corresponding PW node.
 1. Get the PW node name (n=) for the device that you want to map:<br>
@@ -59,7 +58,7 @@ Maps a PW node to a jack_mixer channel (multiple mappings are possible). The cha
 `python jack_mixer_cc.py --pw "mic,alsa_input.usb-MICROPHONE"`
 3. Moving the fader of the channel "mic" will now set the gain of the PW input node "alsa_input.usb-MICROPHONE".<br>
 Info: This doesn't effect audio routing, so the jack_mixer channel that is used can be unconnected. If you want to control a PW output device, you can create a jack_mixer input channel and route the monitoring output of the device to this channel (make sure the output of that channel is muted!!!). With "Pre-fader metering" enabled you can now monitor the device output in jack_mixer.
-___
+
 The `-h|--help` parameter should help you figure out the rest.
 
 
