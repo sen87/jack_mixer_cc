@@ -34,7 +34,7 @@ jack_mixer_cc_client.py: `python` | Optional: `python-dbus` (for notifications)
 3. Connect the jack_mixer and jack_mixer_cc MIDI ports.<br>
 <img src="https://user-images.githubusercontent.com/16217416/106959180-a17cb200-673a-11eb-81ac-22f53e7763b1.jpg"/>
 4. Use the jack_mixer_cc_client to change something. For example: increase the volume of the channel "MPD"<br>
-`python jack_mixer_cc_client.py --notify d -i mpd`
+`python jack_mixer_cc_client.py --notify d -i mpd`<br>
 5. You should see a notification like this:<br>
 <img src="https://user-images.githubusercontent.com/16217416/107836482-927eab00-6d9d-11eb-911a-062cb2621692.png"/>
 
@@ -52,8 +52,8 @@ __plasma (kde):__ `python jack_mixer_cc_client.py --notify p -i mpd`<br>
 
 ### PipeWire Control
 Maps a PW node to a jack_mixer channel (multiple mappings are possible). The channel volume fader and mute toggle will now directly control the corresponding PW node.
-1. Get the PW node name (n=) for the device that you want to map:<br>
-`pw-cli dump short Node |grep alsa`
+1. Get the PW node name for the device that you want to map:<br>
+`pw-cli ls Node |grep "node.name"`
 2. Start jack_mixer_cc with the --pw parameter. Example:<br>
 `python jack_mixer_cc.py --pw "mic,alsa_input.usb-MICROPHONE"`
 3. Moving the fader of the channel "mic" will now set the gain of the PW input node "alsa_input.usb-MICROPHONE".<br>

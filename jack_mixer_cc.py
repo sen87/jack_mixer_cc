@@ -249,16 +249,14 @@ def save_session(sig, frame):
 def pipewire_init():
     try: # get the id numbers for pw nodes
         global pw
-        pw_nodelist = (run(["pw-cli", "dump short Node"], capture_output=True, text=True).stdout).split("\n")
         for node in pw:
-            for pw_node in pw_nodelist:
-                if node[1] in pw_node:
-                    node[2] =  str(re.findall("^[0-9]*", pw_node)[0])
-                    if debug:
-                        print("PW_INIT: node <" + node[1] + "> has id: " + node[2])
-                    break
-            if not node[2]:
+            pw_node = run(["pw-cli", "ls", node[1]], capture_output=True, text=True).stdout
+            if not pw_node:
                 raise Exception("Device not found: " + node[1])
+                break
+            node[2] = str(re.findall("id\s([0-9]*)", pw_node)[0]) # get node_id
+            if debug:
+                print("PW_INIT: node <" + node[1] + "> has id: " + node[2])
     except BaseException as e:
         print("[ERROR] PipeWire could not be initialized:", e)
         _exit(1)
@@ -277,7 +275,6 @@ def pipewire_control(node, cc, val):
         run(["pw-cli", "set-param " + node + " Props { " + prop + " }"], stdin=DEVNULL, stdout=DEVNULL, check=True)
         if debug:
             print("PW_CONTROL: NODE=" + node, "CC=" + str(cc), "VAL=" + str(val), "PROP=" + prop)
-
     except BaseException as e:
         print("[ERROR] PipeWire control failed:", e)
 
