@@ -254,7 +254,7 @@ def pipewire_init():
             if not pw_node:
                 raise Exception("Device not found: " + node[1])
                 break
-            node[2] = str(re.findall("id\s([0-9]*)", pw_node)[0]) # get node_id
+            node[2] = str(re.findall("id\\s([0-9]*)", pw_node)[0]) # get node_id
             if debug:
                 print("PW_INIT: node <" + node[1] + "> has id: " + node[2])
     except BaseException as e:
@@ -312,7 +312,7 @@ try: # parse cli parameters
         pipewire_init()
     map_channels()
     jack_client.activate()
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
     loop.create_task(asyncio.start_server(tcp, ip, port))
     if session: # setup session management
         import atexit
