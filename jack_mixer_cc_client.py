@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# sen <sen@archlinux.us>
+# sen <sen@praisethe.net>
 # --- optional dependencies
 # python-dbus
 # --- imports
@@ -12,7 +12,7 @@ import asyncio
 info = """
 ┌───────────────────────────────────────────────────
 │ jack_mixer MIDI CC Controller
-│ v0.3 (client)
+│ v0.4 (client)
 ├───────────────────────────────────────────────────
 │ Options:
 │ --debug                  debug mode

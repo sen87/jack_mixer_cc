@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# sen <sen@archlinux.us>
+# sen <sen@praisethe.net>
 # --- dependencies
 # jack_mixer python-jack-client
 # --- optional dependencies
@@ -18,7 +18,7 @@ import xml.etree.ElementTree as et
 info = """
 ┌──────────────────────────────────────────────────────────
 │ jack_mixer MIDI CC Controller
-│ v0.3
+│ v0.4
 ├──────────────────────────────────────────────────────────
 │ Options:
 │ --debug        debug mode
